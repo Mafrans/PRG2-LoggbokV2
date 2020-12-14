@@ -13,14 +13,10 @@ import java.io.OutputStreamWriter
 import java.io.StringWriter
 
 class LogBook : NanoHTTPD(8080) {
-    val datastore: Datastore
+    val model: MVCModel = MVCModel()
     val templateConfig: Configuration
 
     init {
-        datastore = Morphia.createDatastore(MongoClients.create(), "logbook")
-        datastore.mapper.mapPackage("me.mafrans.loggbok.v2.models")
-        datastore.ensureIndexes()
-
         templateConfig = Configuration(Configuration.VERSION_2_3_30)
         templateConfig.setClassLoaderForTemplateLoading(javaClass.classLoader, "templates")
         templateConfig.defaultEncoding = "UTF-8"
@@ -33,16 +29,13 @@ class LogBook : NanoHTTPD(8080) {
         val author = Author("Malte")
         val entry = LogEntry(author, "Test Entry", "This is a Test Entry")
 
-        datastore.save(author)
-        datastore.save(entry)
-
         super.start(SOCKET_READ_TIMEOUT, false)
     }
 
     override fun serve(session: IHTTPSession?): Response {
         val template = templateConfig.getTemplate("index.ftlh")
         var writer = StringWriter()
-        template.process(mapOf("logEntries" to datastore.find(LogEntry::class.java).iterator().toList() as List<LogEntry>), writer)
+        template.process(mapOf("logEntries" to model.getEntries()), writer)
 
         return newFixedLengthResponse(
             Response.Status.ACCEPTED,
