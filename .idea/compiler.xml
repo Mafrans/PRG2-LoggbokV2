@@ -12,7 +12,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="LoggbokV2" target="1.5" />
-      <module name="mainModule" target="1.5" />
+      <module name="mainModule" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
