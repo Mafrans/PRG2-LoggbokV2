@@ -42,7 +42,7 @@ class LogBook : NanoHTTPD(8080) {
     override fun serve(session: IHTTPSession?): Response {
         val template = templateConfig.getTemplate("index.ftlh")
         var writer = StringWriter()
-        template.process(mapOf("logEntries" to datastore.find(LogEntry::class.java).iterator().toList() as List<LogEntry>, "test" to Test("test title")), writer)
+        template.process(mapOf("logEntries" to datastore.find(LogEntry::class.java).iterator().toList() as List<LogEntry>), writer)
 
         return newFixedLengthResponse(
             Response.Status.ACCEPTED,
