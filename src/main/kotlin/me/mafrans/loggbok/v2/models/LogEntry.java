@@ -1,21 +1,27 @@
 package me.mafrans.loggbok.v2.models;
 
 import dev.morphia.annotations.*;
+import lombok.Getter;
+import lombok.ToString;
 import org.bson.types.ObjectId;
 
 @Entity("entries")
 @Indexes(
     @Index(fields = {@Field("title"), @Field("author")})
 )
+@ToString
 public class LogEntry {
     @Id
     private ObjectId id;
 
     @Reference
+    @Getter
     public Author author;
 
+    @Getter
     public String title;
 
+    @Getter
     public String body;
 
     public LogEntry() {}
@@ -23,27 +29,5 @@ public class LogEntry {
         this.author = author;
         this.title = title;
         this.body = body;
-    }
-
-    @Override
-    public String toString() {
-        return "LogEntry{" +
-                "id=" + id +
-                ", author=" + author +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                '}';
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public String getBody() {
-        return body;
     }
 }

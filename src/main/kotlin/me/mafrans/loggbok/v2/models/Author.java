@@ -2,6 +2,7 @@ package me.mafrans.loggbok.v2.models;
 
 
 import dev.morphia.annotations.*;
+import lombok.Getter;
 import org.bson.types.ObjectId;
 
 @Entity("authors")
@@ -11,6 +12,8 @@ import org.bson.types.ObjectId;
 public class Author {
     @Id
     public ObjectId id;
+
+    @Getter
     public String name;
 
     public Author() {}
