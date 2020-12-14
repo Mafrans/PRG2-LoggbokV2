@@ -12,11 +12,11 @@ public class LogEntry {
     private ObjectId id;
 
     @Reference
-    private Author author;
+    public Author author;
 
-    private String title;
+    public String title;
 
-    private String body;
+    public String body;
 
     public LogEntry() {}
     public LogEntry(Author author, String title, String body) {
@@ -33,5 +33,17 @@ public class LogEntry {
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 '}';
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public String getBody() {
+        return body;
     }
 }
