@@ -9,6 +9,7 @@ import me.mafrans.loggbok.v2.models.LogEntry
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.StringWriter
+import java.nio.charset.Charset
 import java.util.*
 
 
@@ -33,8 +34,25 @@ class LogBook : NanoHTTPD(8080) {
     }
 
     override fun serve(session: IHTTPSession?): Response {
-        if (session != null) {
-            if (session.method == Method.POST) {
+        if(session != null) {
+            if(session.parms!!.isNotEmpty()) {
+                val authorString = session.parms["author"]
+                val titleString = session.parms["title"]
+                val bodyString = session.parms["body"]
+
+                if(authorString != null && titleString != null && bodyString != null) {
+                    println(authorString)
+                    var author = model.findAuthor(authorString)
+
+                    if (author == null) {
+                        author = Author(authorString);
+                        model.addAuthor(author)
+                    }
+
+                    if (titleString.isNotEmpty() && bodyString.isNotEmpty()) {
+                        model.addEntry(LogEntry(author, titleString, bodyString))
+                    }
+                }
             }
         }
 
@@ -50,7 +68,7 @@ class LogBook : NanoHTTPD(8080) {
         return newFixedLengthResponse(
             Response.Status.ACCEPTED,
             MIME_HTML,
-            writer.buffer.toString()
+            writer.toString()
         );
     }
 }

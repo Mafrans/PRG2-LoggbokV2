@@ -6,7 +6,12 @@
 </head>
 <body>
     <div class="container">
-        <form>
+        <div class="jumbotron mt-5">
+            <h1 class="display-4">Thoughtbook</h1>
+            <p class="lead">A collection of thoughts, created and filled by <a href="https://patreon.com/Mafrans">Mafrans</a>.</p>
+        </div>
+
+        <div class="form mt-5" aria-label="Input Form">
             <div class="row">
                 <div class="col-8">
                     <div class="form-group">
@@ -42,32 +47,69 @@
 
 
             <div class="form-group mb-3">
-                <label for="bodyField">Body</label>
-                <textarea class="form-control" id="bodyField" rows="3"></textarea>
+                <label for="bodyArea">Body</label>
+                <textarea class="form-control" id="bodyArea" rows="3"></textarea>
             </div>
 
             <button id="submitButton" class="btn btn-primary">Submit</button>
-        </form>
-        <ul>
+        </div>
+
+        <hr class="my-5" />
+
+        <h2 class="display-5">Past Thoughts</h2>
+
+        <div id="accordion">
             <#list logEntries as entry>
-                <li>
-                    <#if entry?? >
-                        ${entry.title!"Untitled"} by ${entry.author.name!"Unknown"}
-                    </#if>
-                </li>
+                <#if entry?? >
+                    <div class="card">
+                        <div class="card-header" id="heading-${entry?index}">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-${entry?index}" aria-expanded="true" aria-controls="collapse-${entry?index}">
+                                    ${entry.title}
+                                    <br /><small class="text-muted">${entry.author.name}</small>
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapse-${entry?index}" class="collapse show" aria-labelledby="heading-${entry?index}" data-parent="#accordion">
+                            <div class="card-body">
+                                ${entry.body}
+                            </div>
+                        </div>
+                    </div>
+                </#if>
             </#list>
-        </ul>
+        </div>
     </div>
 
     <script>
-        const authorSelect = document.querySelector("#authorSelect");
-        const submitButton = document.querySelector("#submitButton");
-        authorSelect.addEventListener("input", () => {
+
+        if(location.search !== "") location.href = location.href.split("?")[0];
+
+        function updateAuthor() {
             const newAuthorRow = document.querySelector("#newAuthorRow");
             newAuthorRow.classList.toggle("d-none", authorSelect.value !== "new");
-        });
+        }
 
-        submitButton.addEventListener("submit", console.log);
+        const titleField = document.querySelector("#titleField");
+        const authorSelect = document.querySelector("#authorSelect");
+        const newAuthorField = document.querySelector("#newAuthorField");
+        const bodyArea = document.querySelector("#bodyArea");
+        const submitButton = document.querySelector("#submitButton");
+
+        authorSelect.addEventListener("input", () => updateAuthor());
+        document.addEventListener("DOMContentLoaded", () => updateAuthor());
+
+        submitButton.addEventListener("click", () => {
+            const title = titleField.value;
+            const body = bodyArea.value;
+            let author = authorSelect.value;
+            if(author === "new") {
+                author = newAuthorField.value;
+            }
+
+            location.href = location.href + "?title=" + title + "&body=" + body + "&author=" + author;
+        });
     </script>
 </body>
 </html>
