@@ -1,16 +1,16 @@
 package me.mafrans.loggbok.v2
 
-import com.mongodb.client.MongoClients
-import dev.morphia.Datastore
-import dev.morphia.Morphia
 import fi.iki.elonen.NanoHTTPD
+import fi.iki.elonen.NanoHTTPD.ResponseException
 import freemarker.template.Configuration
-import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import me.mafrans.loggbok.v2.models.Author
 import me.mafrans.loggbok.v2.models.LogEntry
-import java.io.OutputStreamWriter
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.StringWriter
+import java.util.*
+
 
 class LogBook : NanoHTTPD(8080) {
     val model: MVCModel = MVCModel()
@@ -33,9 +33,19 @@ class LogBook : NanoHTTPD(8080) {
     }
 
     override fun serve(session: IHTTPSession?): Response {
+        if (session != null) {
+            if (session.method == Method.POST) {
+            }
+        }
+
         val template = templateConfig.getTemplate("index.ftlh")
         var writer = StringWriter()
-        template.process(mapOf("logEntries" to model.getEntries()), writer)
+        template.process(
+            mapOf(
+                "logEntries" to model.getEntries(),
+                "authors" to model.getAuthors()
+            ), writer
+        )
 
         return newFixedLengthResponse(
             Response.Status.ACCEPTED,

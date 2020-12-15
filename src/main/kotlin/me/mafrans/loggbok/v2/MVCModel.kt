@@ -26,4 +26,8 @@ class MVCModel {
     fun getEntries(): List<LogEntry> {
         return datastore.find(LogEntry::class.java).iterator().toList() as List<LogEntry>
     }
+
+    fun getAuthors(): List<Author> {
+        return datastore.find(Author::class.java).iterator().toList() as List<Author>
+    }
 }
