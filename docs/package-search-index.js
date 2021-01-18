@@ -1,0 +1,1 @@
+var packageSearchIndex = [{"l":"me.mafrans.loggbok.v2.models","url":"me/mafrans/loggbok/v2/models/package-summary.html"}, {"l":"me.mafrans.loggbok.v2","url":"me/mafrans/loggbok/v2/package-summary.html"}, {"l":"All packages","url":"index.html"}]

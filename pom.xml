@@ -72,7 +72,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <outputDir>some/out/dir</outputDir>
+                    <outputDir>${project.basedir}/docs</outputDir>
                 </configuration>
             </plugin>
         </plugins>

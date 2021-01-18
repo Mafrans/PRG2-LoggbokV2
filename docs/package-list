@@ -1,0 +1,6 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+
+me.mafrans.loggbok.v2
+me.mafrans.loggbok.v2.models
+
