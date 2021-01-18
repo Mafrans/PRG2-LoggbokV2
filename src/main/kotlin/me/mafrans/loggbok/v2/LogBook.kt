@@ -12,13 +12,22 @@ import java.io.StringWriter
 import java.nio.charset.Charset
 import java.util.*
 
-
+/**
+ * MVC Controller class hosting a NanoHTTPD servlet and managing log entries.
+ * @see fi.iki.elonen.NanoHTTPD
+ */
 class LogBook : NanoHTTPD(8080) {
-    val model: MVCModel = MVCModel()
-    val templateConfig: Configuration
+    /**
+     * MVC Model class, manages data.
+     */
+    private val model: MVCModel = MVCModel()
+
+    /**
+     * FreeMarker template configuration
+     */
+    private val templateConfig: Configuration = Configuration(Configuration.VERSION_2_3_30)
 
     init {
-        templateConfig = Configuration(Configuration.VERSION_2_3_30)
         templateConfig.setClassLoaderForTemplateLoading(javaClass.classLoader, "templates")
         templateConfig.defaultEncoding = "UTF-8"
         templateConfig.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
@@ -26,38 +35,42 @@ class LogBook : NanoHTTPD(8080) {
         templateConfig.fallbackOnNullLoopVariable = false
     }
 
-    override fun start() {
-        val author = Author("Malte")
-        val entry = LogEntry(author, "Test Entry", "This is a Test Entry")
-
-        super.start(SOCKET_READ_TIMEOUT, false)
-    }
-
+    /**
+     * Overridden NanoHTTPD function serving data to the web browser on request.
+     * @param session An IHTTPSession containing relevant session data, such as the request type and query parameters.
+     */
     override fun serve(session: IHTTPSession?): Response {
+        // Check if session exists
         if(session != null) {
+            // If it does, check for any query parameters
             if(session.parms!!.isNotEmpty()) {
+                // Get the relevant query parameters
                 val authorString = session.parms["author"]
                 val titleString = session.parms["title"]
                 val bodyString = session.parms["body"]
 
                 if(authorString != null && titleString != null && bodyString != null) {
-                    println(authorString)
-                    var author = model.findAuthor(authorString)
-
-                    if (author == null) {
-                        author = Author(authorString);
-                        model.addAuthor(author)
-                    }
-
+                    // If there aren't any problems with the title and body, attempt to add the entry to the list
                     if (titleString.isNotEmpty() && bodyString.isNotEmpty()) {
+                        // Find a relevant author from the model.
+                        var author = model.findAuthor(authorString)
+
+                        // If author doesn't exist, create a new one
+                        if (author == null) {
+                            author = Author(authorString);
+                            model.addAuthor(author)
+                        }
+
+                        // Add the entry
                         model.addEntry(LogEntry(author, titleString, bodyString))
                     }
                 }
             }
         }
 
+        // Find and parse the index.ftlh page
         val template = templateConfig.getTemplate("index.ftlh")
-        var writer = StringWriter()
+        val writer = StringWriter()
         template.process(
             mapOf(
                 "logEntries" to model.getEntries(),
@@ -65,6 +78,7 @@ class LogBook : NanoHTTPD(8080) {
             ), writer
         )
 
+        // Return the page as a response, rendering it on the client
         return newFixedLengthResponse(
             Response.Status.ACCEPTED,
             MIME_HTML,
@@ -73,7 +87,10 @@ class LogBook : NanoHTTPD(8080) {
     }
 }
 
+/**
+ * Main function, creates and starts the servlet.
+ */
 fun main() {
     val logBook = LogBook()
-    logBook.start()
+    logBook.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
 }
